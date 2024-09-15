@@ -22,8 +22,14 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ 
+    origin: ["http://localhost:3000", "https://lisansyayincilik.netlify.app"], // Hem localhost hem de Netlify için izin ver
+    methods: ["GET", "POST", "PUT", "DELETE"], // İzin verilen HTTP metodları
+    credentials: true // Gerektiğinde çerezleri (cookies) göndermek için
+}));
+
 app.use(express.json());
+
 // routes
 app.use("/users", userRouter);
 app.use("/book", bookRouter);
