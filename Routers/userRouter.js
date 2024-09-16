@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
             return res.status(400).json({ message: "Kullanıcı adı zaten mevcut." });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, process.env.JWT_SECRET_KEY);
 
         const createdUser = await User.create({
             username,
@@ -128,7 +128,7 @@ router.put("/changePassword", authMiddleware, async (req, res) => {
         }
 
         // Yeni şifreyi hash'leyip kaydet
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const hashedPassword = await bcrypt.hash(newPassword, process.env.JWT_SECRET_KEY);
         user.password = hashedPassword;
 
         await user.save();
@@ -139,6 +139,7 @@ router.put("/changePassword", authMiddleware, async (req, res) => {
         return res.status(500).json({ message: 'Şifre güncellenirken bir hata oluştu.' });
     }
 });
+
 
 // Logout rotası
 router.post("/logout", authMiddleware, (req, res) => {
