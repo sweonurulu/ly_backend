@@ -116,11 +116,11 @@ router.get("/listBooks/:bookCategory?", async (req, res) => {
 
         let bookList;
         if (bookCategory && mongoose.Types.ObjectId.isValid(bookCategory)) {
-            // Belirli bir kategoriye göre kitapları filtrele
-            bookList = await Book.find(filter).populate('bookCategory', 'name');
+            // Belirli bir kategoriye göre kitapları filtrele ve isim sırasına göre sırala
+            bookList = await Book.find(filter).sort({ bookName: 1 }).populate('bookCategory', 'name');
         } else {
-            // Kategori verilmemişse, en yeni 9 kitabı getir
-            bookList = await Book.find({}).sort({ bookCreatedDate: -1 }).limit(9).populate('bookCategory', 'name');
+            // Kategori verilmemişse, kitapları isim sırasına göre sırala ve en yeni 9 kitabı getir
+            bookList = await Book.find({}).sort({ bookName: 1 }).limit(9).populate('bookCategory', 'name');
         }
 
         // Kitapları base64 image ile birlikte döndür

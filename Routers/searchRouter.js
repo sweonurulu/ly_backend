@@ -1,55 +1,51 @@
 const express = require("express");
-const Item = require('../models/bookModel.js');
-const User = require('../models/userModel.js');
+const Book = require("../models/bookModel.js");
 
 const router = express.Router();
 
-router.get("/search", async (req, res) => {
-    try {
-        // Arama kutusuna yazılan metni al
-        const { query } = req.query;
+// Arama terimindeki Türkçe ve İngilizce karakter dönüşümleri için bir fonksiyon
+const normalizeSearchTerm = (term) => {
+  const map = {
+    ç: 'c', Ç: 'C',
+    ğ: 'g', Ğ: 'G',
+    ı: 'i', İ: 'I',
+    ö: 'o', Ö: 'O',
+    ş: 's', Ş: 'S',
+    ü: 'u', Ü: 'U',
+  };
+  return term.replace(/ç|Ç|ğ|Ğ|ı|İ|ö|Ö|ş|Ş|ü|Ü/g, (matched) => map[matched]);
+};
 
-        // Eğer arama metni yoksa boş sonuç döndür
-        if (!query) {
-            return res.status(200).json([]);
-        }
+router.get("/searchBooks", async (req, res) => {
+  try {
+    // Arama kutusuna yazılan metni al
+    const { query } = req.query;
 
-        // Regex ile arama metni eşleşmesini kontrol et
-        const regex = new RegExp(query, 'i');
-
-        // Veritabanından arama kriterlerine göre eşleşen verileri bul
-        const auctionList = await Auction.find({
-            $or: [
-                { auctionTitle: regex },
-                { auctionDescription: regex }
-            ]
-        });
-
-        const itemList = await Item.find({
-            $or: [
-                { itemName: regex },
-                { itemDescription: regex }
-            ]
-        });
-
-        const userList = await User.find({
-            username: regex
-        });
-
-        // Arama sonuçlarını birleştir
-        const searchResults = [
-            ...auctionList.map(auction => ({ type: 'auction', title: auction.auctionTitle, description: auction.auctionDescription })),
-            ...itemList.map(item => ({ type: 'item', title: item.itemName, description: item.itemDescription })),
-            ...userList.map(user => ({ type: 'user', title: user.username }))
-        ];
-
-        // JSON formatında geri döndür
-        return res.status(200).json(searchResults);
-    } catch (error) {
-        // Hata durumunda hata mesajını geri döndür
-        console.error(error);
-        return res.status(500).json({ message: "Arama Sonuçlanmadı." });
+    // Eğer arama metni yoksa boş sonuç döndür
+    if (!query) {
+      return res.status(200).json([]);
     }
+
+    // Arama terimini normalize ederek Türkçe karakterler ile İngilizce karşılıklarını eşleştir
+    const normalizedQuery = normalizeSearchTerm(query);
+
+    // Veritabanından arama kriterlerine göre eşleşen kitapları bul ve alfabetik sırayla döndür
+    const bookList = await Book.find({
+      $or: [
+        { bookName: { $regex: normalizedQuery, $options: "i" } }, 
+        { authors: { $regex: normalizedQuery, $options: "i" } }
+      ],
+    })
+    .collation({ locale: "tr", strength: 1 }) // Türkçe karakterlere duyarlı arama
+    .sort({ bookName: 1 }); // Kitap isimlerini alfabetik sıraya göre sıralama (A-Z)
+
+    // Arama sonuçlarını JSON formatında geri döndür
+    return res.status(200).json(bookList);
+  } catch (error) {
+    // Hata durumunda hata mesajını geri döndür
+    console.error(error);
+    return res.status(500).json({ message: "Arama Sonuçlanmadı." });
+  }
 });
 
 module.exports = router;
