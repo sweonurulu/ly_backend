@@ -22,4 +22,5 @@ const bookPDFSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('BookPDF', bookPDFSchema);
+// Eğer model zaten tanımlıysa mevcut modeli kullan, değilse yeni modeli oluştur
+module.exports = mongoose.models.BookPDF || mongoose.model('BookPDF', bookPDFSchema);
