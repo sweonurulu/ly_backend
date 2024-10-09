@@ -27,7 +27,8 @@ router.post("/signup", async (req, res) => {
             return res.status(400).json({ message: "Kullanıcı adı zaten mevcut." });
         }
 
-        const hashedPassword = await bcrypt.hash(password, process.env.JWT_SECRET_KEY);
+        const saltRounds = 10; // Burada salt değeri belirleniyor
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Doğru kullanım
 
         const createdUser = await User.create({
             username,
@@ -128,7 +129,8 @@ router.put("/changePassword", authMiddleware, async (req, res) => {
         }
 
         // Yeni şifreyi hash'leyip kaydet
-        const hashedPassword = await bcrypt.hash(newPassword, process.env.JWT_SECRET_KEY);
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds); // SaltRounds ile hashleme
         user.password = hashedPassword;
 
         await user.save();

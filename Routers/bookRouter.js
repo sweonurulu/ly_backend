@@ -34,7 +34,7 @@ router.post("/createBook", authMiddleware, adminMiddleware, upload.fields([
                 authors,
                 bookImg: req.files['bookImg']
             });
-            return res.status(400).json({ message: 'Kitap Adı, Yazarlar, Fiyat, Kitap Kategorisi ve Kitap Görseli zorunludur' });
+            return res.status(400).json({ message: 'Kitap Adı, Editörler, Fiyat, Kitap Kategorisi ve Kitap Görseli zorunludur' });
         }
 
         const imgBuffer = req.files['bookImg'][0].buffer;

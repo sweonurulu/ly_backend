@@ -51,6 +51,7 @@ router.get('/list-pdf-titles', async (req, res) => {
 });
 
 // MongoDB'deki `_id` ile PDF getirme route'u
+/*
 router.get('/get-pdf/:id', async (req, res) => {
     const { id } = req.params;
   
@@ -70,6 +71,31 @@ router.get('/get-pdf/:id', async (req, res) => {
       res.status(500).json({ message: 'PDF alınamadı.' });
     }
   });
+  */
+  router.get('/get-pdf/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const pdf = await ContentPdf.findById(id);
+      if (!pdf) {
+        console.log('PDF bulunamadı.');
+        return res.status(404).json({ message: 'PDF bulunamadı.' });
+      }
+    
+      // PDF başlıklarını ekleyin
+      res.set({
+        'Content-Type': pdf.contentType, // PDF'nin content type'ı
+        'Content-Disposition': 'inline' // Tarayıcıda görüntüleme
+      });
+    
+      //console.log(pdf.pdfData);
+      res.send(pdf.pdfData); // PDF verisini gönder
+    } catch (error) {
+      console.error('PDF getirme hatası:', error);
+      res.status(500).json({ message: 'PDF alınamadı.' });
+    }
+});
+
 
 // Yeni PDF dosyası oluşturma
 router.post('/create-pdf', upload.single('pdf'), async (req, res) => {
