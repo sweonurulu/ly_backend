@@ -10,7 +10,7 @@ const authMiddleware = require("../middlewares/authMiddleware"); // Auth middlew
 // PDF önizlemesini görüntülemek için GET rotası
 router.get('/review-pdfviewer/:bookId', async (req, res) => {
     try {
-        console.log("backenddeyiz");
+        //console.log("backenddeyiz");
         const { bookId } = req.params;
         const bookPreview = await BookPreviewPDF.findOne({ bookId });
 

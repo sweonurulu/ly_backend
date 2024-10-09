@@ -53,13 +53,17 @@ router.delete('/deleteCategory/:id', authMiddleware, adminMiddleware, async (req
 // Kategorileri Listeleme (Bu işlemi herkes yapabilir, ancak sadece görünür kategoriler)
 router.get('/listCategories', async (req, res) => {
     try {
-        const categories = await Category.find({ isVisible: true }).populate('parentCategory', 'name');
+        const categories = await Category.find({ isVisible: true })
+            .populate('parentCategory', 'name')
+            .sort({ name: 1 }); // name alanına göre alfabetik sırada sıralama (1: A-Z, -1: Z-A)
+        
         res.status(200).json(categories);
     } catch (error) {
         console.error("Kategoriler listelenirken hata:", error);
         res.status(500).json({ message: 'Kategoriler listelenemedi' });
     }
 });
+
 
 // Admin kategorileri görüntüleyebilir (gizli kategoriler dahil)
 router.get('/adminListCategories', authMiddleware, adminMiddleware, async (req, res) => {
