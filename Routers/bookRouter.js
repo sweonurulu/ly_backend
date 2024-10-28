@@ -120,7 +120,7 @@ router.get("/listBooks/:bookCategory?", async (req, res) => {
             bookList = await Book.find(filter).sort({ bookName: 1 }).populate('bookCategory', 'name');
         } else {
             // Kategori verilmemişse, kitapları isim sırasına göre sırala ve en yeni 9 kitabı getir
-            bookList = await Book.find({}).sort({ bookName: 1 }).limit(9).populate('bookCategory', 'name');
+            bookList = await Book.find({}).sort({ bookName: 1 }).populate('bookCategory', 'name');
         }
 
         // Kitapları base64 image ile birlikte döndür
