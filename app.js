@@ -23,7 +23,7 @@
     const app = express();
 
     app.use(cors({ 
-        origin: [ "http://localhost:3000","lisansyayincilik.com.tr","onurulu17.com.tr","*"], // Hem localhost hem de Netlify için izin ver
+        origin: [ "http://localhost:3000","lisansyayincilik.com.tr","onurulu17.com.tr","https://lisansyayincilik.netlify.app"], // Hem localhost hem de Netlify için izin ver
         methods: ["GET", "POST", "PUT", "DELETE"], // İzin verilen HTTP metodları
         credentials: true // Gerektiğinde çerezleri (cookies) göndermek için
     }));
