@@ -46,7 +46,7 @@
     app.use("/content-pdf", contentPdfRouter);
 
     app.listen(process.env.PORT, () => {
-        mongoose.connect(process.env.DB_CONNECTION_LOCAL)
+        mongoose.connect(process.env.DB_CONNECTION)
             .then(() => console.log("Veritabanına bağlandı"))
             .catch((error) => console.log(error));
     });
